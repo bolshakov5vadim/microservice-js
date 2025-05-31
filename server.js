@@ -1,12 +1,9 @@
 const express = require('express');
 const path = require('path');
+const multer = require('multer');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const morgan = require('morgan');
-const fs = require('fs');
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
-app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => 
@@ -17,10 +14,7 @@ app.get('/', (req, res) =>
 //);
 
 
-
-
-const multer = require('multer');
-const storage = multer.diskStorage({
+const storage = multer.diskStorage({//объект-загрузчик
   destination: (req, file, cb) => {
     cb(null, 'uploads/'); // Папка для сохранения загруженных файлов
   },
@@ -31,7 +25,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-const MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;//объект-БД
 let db;
 const url =  'mongodb://user:password@10.0.2.22:27017/databaseName';
 // const url =  'mongodb://localhost:21017/databaseName';
@@ -44,6 +38,8 @@ MongoClient.connect(url, (err, database) =>
     console.log('listening on ', port);
   });
 });
+
+
 app.post('/clicked', upload.single('file'),(req, res) => 
 {//ОЧЕНЬ ВАЖНО!! В upload.single указывается NAME ПОЛЯ-file
   const text = req.body.text; 
@@ -51,39 +47,16 @@ app.post('/clicked', upload.single('file'),(req, res) =>
   const form = {clickTime: new Date(), text:text, fileName:fileName};
 if (db)
 {
-  db.collection('clicks').save(form, (err, result) => 
+  db.collection('table').save(form, (err, result) => 
 {
     if (err) 
     {
       return console.log(err);
       res.sendStatus(202);
     }
-    console.log('click added to db');
+    console.log('Added to db');
     res.sendStatus(201);
 });
 }
 
 });
-
-
-
-
-
-
-// Роутер-создает АПИ
-//const mainApp = require('./main'); 
-//app.use(express.json());
-//app.use(express.static(path.join(__dirname, 'public')));
-//app.use('/api', mainApp); // Подключаем роутер к /api
-
-//router.js
-//const express = require('express');
-//const router = express.Router();
-//router.get('/data', (req, res) => {
-//  res.json({ message: 'Данные из API' });
-//});
-//router.post('/submit', (req, res) => {
-//  console.log(req.body);
-//  res.json({ message: 'Данные получены' });
-//});
-//module.exports = router;
