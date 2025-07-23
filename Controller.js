@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.spring.datajpa.model.Employee;//название файла. подключили сущность 
+import com.spring.datajpa.model.Entity;//название файла. подключили сущность 
 import com.spring.datajpa.repository.Repository;//название файла. подключили репозиторий
 
 @RestController//аннотация, что делает код контроллером
